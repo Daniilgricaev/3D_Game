@@ -14,12 +14,15 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class App{
     private long window;
+    private ShaderProgram shaderProgram;
+
 
     public void run(){
         System.out.println("Hello LWJGL" + Version.getVersion());
 
         init();
         loop();
+        delete();
 
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -57,6 +60,12 @@ public class App{
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1);
         glfwShowWindow(window);
+
+        GL.createCapabilities();
+
+        shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
+
+
     }
     private void loop(){
         GL.createCapabilities();
@@ -65,10 +74,24 @@ public class App{
         while(!glfwWindowShouldClose(window)){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            shaderProgram.bind();
+
+            shaderProgram.unbind();
+
             glfwSwapBuffers(window);
 
             glfwPollEvents();
         }
+    }
+    private void delete(){
+        if(shaderProgram != null){
+            shaderProgram.delete();
+        }
+
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
     public static void main(String[] args) {
