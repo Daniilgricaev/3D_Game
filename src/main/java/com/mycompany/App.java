@@ -48,7 +48,9 @@ public class App{
             IntBuffer pHeight = stack.mallocInt(1);
 
             glfwGetWindowSize(window,pWidth,pHeight);
-
+            int realWidth = pWidth.get(0);
+            int realHeight = pHeight.get(0);
+            System.out.println("Window size :"+realWidth+"*"+realHeight);
             GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             glfwSetWindowPos(
                     window,
@@ -63,6 +65,7 @@ public class App{
 
         GL.createCapabilities();
 
+
         shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
 
 
@@ -70,17 +73,27 @@ public class App{
     private void loop(){
         GL.createCapabilities();
         glClearColor(0.0f, 0.3f, 0.6f, 0.0f);
-
         while(!glfwWindowShouldClose(window)){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             shaderProgram.bind();
-
             shaderProgram.unbind();
 
             glfwSwapBuffers(window);
 
             glfwPollEvents();
+            if(glfwGetKey(window, GLFW_KEY_ESCAPE)==GLFW_PRESS){
+                glfwSetWindowShouldClose(window, true);
+            }
+            if (glfwGetKey(window,GLFW_KEY_SPACE)==GLFW_PRESS) {
+                System.out.println("Space");
+            }
+            if(glfwGetKey(window, GLFW_KEY_F1)==GLFW_PRESS){
+                float red = (float) Math.random();
+                float green = (float) Math.random();
+                float blue = (float) Math.random();
+
+                glClearColor(red, green, blue, 1.0f);
+            }
         }
     }
     private void delete(){
