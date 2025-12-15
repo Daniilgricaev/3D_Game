@@ -15,12 +15,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class App{
     private long window;
     private ShaderProgram shaderProgram;
-    private float[] triangle = {
+    private final float[] triangle = {
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
             0.0f, 0.5f, 0.0f
 
     };
+    TriangleRender triangleRender = new TriangleRender();
+    public float[] getTriangle(){
+        return triangle;
+    }
 
     public void run(){
         System.out.println("Hello LWJGL" + Version.getVersion());
@@ -39,7 +43,7 @@ public class App{
 
         if(!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
-        if(triangle != null){
+        if(triangleRender != null){
             System.out.println("Triangle wos created");
         }else{
             System.out.println("Error: triangle don't created");
@@ -73,11 +77,7 @@ public class App{
         glfwShowWindow(window);
 
         GL.createCapabilities();
-
-
         shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
-
-
     }
     private void loop(){
         GL.createCapabilities();
@@ -85,6 +85,7 @@ public class App{
         while(!glfwWindowShouldClose(window)){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             shaderProgram.bind();
+            triangleRender.render();
             shaderProgram.unbind();
 
             glfwSwapBuffers(window);
