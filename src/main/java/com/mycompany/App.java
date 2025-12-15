@@ -15,7 +15,12 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class App{
     private long window;
     private ShaderProgram shaderProgram;
+    private float[] triangle = {
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f, 0.5f, 0.0f
 
+    };
 
     public void run(){
         System.out.println("Hello LWJGL" + Version.getVersion());
@@ -34,7 +39,11 @@ public class App{
 
         if(!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
-
+        if(triangle != null){
+            System.out.println("Triangle wos created");
+        }else{
+            System.out.println("Error: triangle don't created");
+        }
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE,GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE,GLFW_TRUE);
@@ -94,6 +103,11 @@ public class App{
 
                 glClearColor(red, green, blue, 1.0f);
             }
+            if(glfwGetKey(window, GLFW_KEY_R)==GLFW_PRESS){
+                glClearColor(0.0f,0.3f, 0.6f, 0.0f);
+                System.out.println("The colors were set to the original");
+            }
+
         }
     }
     private void delete(){
