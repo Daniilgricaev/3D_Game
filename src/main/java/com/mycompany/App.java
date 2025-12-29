@@ -15,13 +15,14 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class App{
     private long window;
     private ShaderProgram shaderProgram;
+    private TriangleRender triangleRender;
+
     private final float[] triangle = {
             -0.5f, -0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
             0.0f, 0.5f, 0.0f
 
     };
-    TriangleRender triangleRender = new TriangleRender();
     public float[] getTriangle(){
         return triangle;
     }
@@ -43,14 +44,15 @@ public class App{
 
         if(!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
-        if(triangleRender != null){
-            System.out.println("Triangle wos created");
-        }else{
-            System.out.println("Error: triangle don't created");
-        }
+        System.out.println("Window in process...");
+
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE,GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE,GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         window = glfwCreateWindow(800,600,"MY 3D game with OpenGL",NULL, NULL);
         if (window == NULL){
@@ -77,13 +79,28 @@ public class App{
         glfwShowWindow(window);
 
         GL.createCapabilities();
-        shaderProgram = new ShaderProgram("vertex.glsl", "fragment.glsl");
+        String vertexShader = """
+            #version 330 core
+            layout(location = 0) in vec3 aPos;
+            void main() {
+                gl_Position = vec4(aPos, 1.0);
+            }
+            """;
+        String fragmentShader = """
+            #version 330 core
+            out vec4 FragColor;
+            void main() {
+                FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+            }
+            """;
+        shaderProgram = new ShaderProgram(vertexShader,fragmentShader);
+        triangleRender = new TriangleRender(triangle);
     }
     private void loop(){
-        GL.createCapabilities();
-        glClearColor(0.0f, 0.3f, 0.6f, 0.0f);
+        glClearColor(0.0f, 0.3f, 0.6f, 1.0f);
         while(!glfwWindowShouldClose(window)){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             shaderProgram.bind();
             triangleRender.render();
             shaderProgram.unbind();
@@ -105,7 +122,7 @@ public class App{
                 glClearColor(red, green, blue, 1.0f);
             }
             if(glfwGetKey(window, GLFW_KEY_R)==GLFW_PRESS){
-                glClearColor(0.0f,0.3f, 0.6f, 0.0f);
+                glClearColor(0.0f,0.3f, 0.6f, 1.0f);
                 System.out.println("The colors were set to the original");
             }
 
