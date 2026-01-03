@@ -16,6 +16,27 @@ public class App{
     private long window;
     private ShaderProgram shaderProgram;
     private TriangleRender triangleRender;
+    private CubeRender cubeRender;
+
+    private final float[] cube = {//cube vertices
+            -0.5f, -0.5f, 0.0f,
+             0.5f, -0.5f, 0.0f,
+             0.5f,  0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f,
+
+            -0.5f, -0.5f, -1.0f,
+             0.5f, -0.5f, -1.0f,
+             0.5f,  0.5f, -1.0f,
+            -0.5f,  0.5f, -1.0f
+    };
+    private final int[] index = {
+            0,1,2,  2,3,0,//front side
+            4,5,6,  6,7,4,//back side
+            3,2,6,  6,7,3,//top side
+            1,0,4,  4,5,1,//lower side
+            4,0,3,  3,7,4,//left side
+            1,5,6,  6,2,1//right side
+    };
 
     private final float[] triangle = {
             -0.5f, -0.5f, 0.0f,
@@ -79,6 +100,10 @@ public class App{
         glfwShowWindow(window);
 
         GL.createCapabilities();
+
+        glEnable(GL_DEPTH_TEST);//Depth test
+        glDepthFunc(GL_LESS);
+
         String vertexShader = """
             #version 330 core
             layout(location = 0) in vec3 aPos;
@@ -94,15 +119,17 @@ public class App{
             }
             """;
         shaderProgram = new ShaderProgram(vertexShader,fragmentShader);
-        triangleRender = new TriangleRender(triangle);
+        triangleRender = new TriangleRender(triangle);//triangle include
+        cubeRender = new CubeRender(cube,index);//cube include
     }
     private void loop(){
-        glClearColor(0.0f, 0.3f, 0.6f, 1.0f);
+        glClearColor(0.0f, 0.3f, 0.6f, 1.0f);//obj color
         while(!glfwWindowShouldClose(window)){
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             shaderProgram.bind();
-            triangleRender.render();
+            //triangleRender.render();
+            cubeRender.render();//cube render
             shaderProgram.unbind();
 
             glfwSwapBuffers(window);
