@@ -11,23 +11,27 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class App{
     private long window;
     private ShaderProgram shaderProgram;
     private TriangleRender triangleRender;
     private CubeRender cubeRender;
+    private Matrix4f modelMatrix;
+    private Matrix4f viewMatrix;
+    private Matrix4f projectionMatirx;
 
     private final float[] cube = {//cube vertices
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f,
+            -0.5f, -0.5f, 0.5f,
+             0.5f, -0.5f, 0.5f,
+             0.5f,  0.5f, 0.5f,
+            -0.5f,  0.5f, 0.5f,
 
-            -0.5f, -0.5f, -1.0f,
-             0.5f, -0.5f, -1.0f,
-             0.5f,  0.5f, -1.0f,
-            -0.5f,  0.5f, -1.0f
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f
     };
     private final int[] index = {
             0,1,2,  2,3,0,//front side
@@ -107,20 +111,32 @@ public class App{
         String vertexShader = """
             #version 330 core
             layout(location = 0) in vec3 aPos;
+            
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
+            
             void main() {
-                gl_Position = vec4(aPos, 1.0);
+                gl_Position = projection * view * model * vec4(aPos, 1.0);
             }
             """;
         String fragmentShader = """
             #version 330 core
             out vec4 FragColor;
             void main() {
-                FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+                FragColor = vec4(1.0, 0.0, 0.2, 1.0);
             }
             """;
         shaderProgram = new ShaderProgram(vertexShader,fragmentShader);
         triangleRender = new TriangleRender(triangle);//triangle include
         cubeRender = new CubeRender(cube,index);//cube include
+        modelMatrix = new Matrix4f();
+        viewMatrix = new Matrix4f();
+        projectionMatirx = new Matrix4f();
+        modelMatrix.identity();
+        viewMatrix.identity();
+        projectionMatirx.identity();
+        viewMatrix.translate(0,0, -5.0f);
     }
     private void loop(){
         glClearColor(0.0f, 0.3f, 0.6f, 1.0f);//obj color
@@ -128,9 +144,24 @@ public class App{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             shaderProgram.bind();
+            int modelLoc = glGetUniformLocation(shaderProgram.getProgramID(), "model");
+            int viewLoc = glGetUniformLocation(shaderProgram.getProgramID(), "view");
+            int projectionLoc = glGetUniformLocation(shaderProgram.getProgramID(), "projection");
+
+            if(modelLoc != -1){
+                glUniformMatrix4fv(modelLoc, false, modelMatrix.toFloatBuffer());
+            }
+            glUniformMatrix4fv(viewLoc, false, viewMatrix.toFloatBuffer());
+            glUniformMatrix4fv(projectionLoc, false, projectionMatirx.toFloatBuffer());
             //triangleRender.render();
+            float aspect = 800.0f/600.f;
+            projectionMatirx.setPerspective(45.0f, aspect,0.1f,100.0f);
+            float time = (float)glfwGetTime();
+            modelMatrix.identity();
+            modelMatrix.rotateY(time + 0.5f);
             cubeRender.render();//cube render
             shaderProgram.unbind();
+
 
             glfwSwapBuffers(window);
 
