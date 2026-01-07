@@ -28,6 +28,9 @@ public class ShaderProgram {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
     }
+    public  int getProgramID(){
+        return programID ;
+    }
     public void bind(){
         glUseProgram(programID);
     }
