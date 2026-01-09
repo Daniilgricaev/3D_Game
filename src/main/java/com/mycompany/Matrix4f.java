@@ -82,6 +82,18 @@ public class Matrix4f {
         this.multiply(rotatingX);
         return this;
     }
+    public Matrix4f rotateZ(float angle){
+        Matrix4f rotatingZ = new Matrix4f();
+        rotatingZ.identity();
+        float Cos = (float)Math.cos(angle);
+        float Sin = (float)Math.sin(angle);
+        rotatingZ.setElem(0,0,Cos);
+        rotatingZ.setElem(0,1,-Sin);
+        rotatingZ.setElem(1,0,Sin);
+        rotatingZ.setElem(1,1,Cos);
+        this.multiply(rotatingZ);
+        return this;
+    }
     public Matrix4f setPerspective(float fov, float aspect, float near, float far){
         this.identity();
         this.identity();
