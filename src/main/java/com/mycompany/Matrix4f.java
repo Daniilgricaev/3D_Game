@@ -57,7 +57,7 @@ public class Matrix4f {
         this.multiply(translation);
         return this;
     }
-    public Matrix4f rotateY(double angle){
+    public Matrix4f rotateY(float angle){
         Matrix4f rotatingY = new Matrix4f();
         rotatingY.identity();
         float Cos = (float)Math.cos(angle);
@@ -69,6 +69,18 @@ public class Matrix4f {
         this.multiply(rotatingY);
         return this;
 
+    }
+    public Matrix4f rotateX(float angle){
+        Matrix4f rotatingX = new Matrix4f();
+        rotatingX.identity();
+        float Cos = (float)Math.cos(angle);
+        float Sin = (float)Math.sin(angle);
+        rotatingX.setElem(1,1,Cos);
+        rotatingX.setElem(1,2,-Sin);
+        rotatingX.setElem(2,1,Sin);
+        rotatingX.setElem(2,2,Cos);
+        this.multiply(rotatingX);
+        return this;
     }
     public Matrix4f setPerspective(float fov, float aspect, float near, float far){
         this.identity();
