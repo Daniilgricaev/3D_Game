@@ -155,11 +155,12 @@ public class App{
             glUniformMatrix4fv(projectionLoc, false, projectionMatirx.toFloatBuffer());
             //triangleRender.render();
             float aspect = 800.0f/600.f;
-            projectionMatirx.setPerspective(90.0f, aspect,0.1f,100.0f);
+            projectionMatirx.setPerspective(45.0f, aspect,0.1f,100.0f);
             float time = (float)glfwGetTime();
             modelMatrix.identity();
             modelMatrix.rotateX(time + 1.0f);
-            modelMatrix.rotateY(time + 0.5f);
+            modelMatrix.rotateY(time + 1.0f);
+            modelMatrix.rotateZ(time + 1.0f);
             cubeRender.render();//cube render
             shaderProgram.unbind();
 
