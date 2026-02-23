@@ -124,7 +124,7 @@ public class App{
             #version 330 core
             out vec4 FragColor;
             void main() {
-                FragColor = vec4(0.0, 0.0, 0.2, 1.0);
+                FragColor = vec4(1.0, 1.0, 1.0, 1.0);
             }
             """;
         shaderProgram = new ShaderProgram(vertexShader,fragmentShader);
@@ -158,9 +158,8 @@ public class App{
             projectionMatirx.setPerspective(45.0f, aspect,0.1f,100.0f);
             float time = (float)glfwGetTime();
             modelMatrix.identity();
-            modelMatrix.rotateX(time + 1.0f);
-            modelMatrix.rotateY(time + 1.0f);
-            modelMatrix.rotateZ(time + 1.0f);
+            modelMatrix.rotateX(time + 0.5f);
+            modelMatrix.rotateY(time + 0.5f);
             cubeRender.render();//cube render
             shaderProgram.unbind();
 
